@@ -5,14 +5,21 @@ set(CMAKE_CXX_STANDARD 17)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
 set(CMAKE_CXX_EXTENSIONS OFF)
 
-# Добавляем предупреждения
 add_compile_options(-Wall -Wextra -Wpedantic)
 
-# Указываем папку с заголовками
+
 include_directories(${PROJECT_SOURCE_DIR}/include)
 
-# Автоматически собираем все .cpp файлы из src/
+
 file(GLOB SOURCES src/*.cpp)
 
-# Создаём исполняемый файл
+
 add_executable(lab_oop_game ${SOURCES})
+
+
+find_package(GTest QUIET)
+if(GTest_FOUND)
+    message(STATUS "GTest found, tests can be added manually via Makefile in /tests")
+else()
+    message(STATUS "GTest not found or disabled. Tests are built separately with Makefile in /tests")
+endif()
