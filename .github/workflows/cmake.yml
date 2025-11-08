@@ -17,21 +17,23 @@ jobs:
       - name: Install dependencies
         run: |
           sudo apt update
-          sudo apt install -y cmake g++ libgtest-dev
-          cd /usr/src/googletest
-          sudo cmake .
-          sudo make
-          sudo cp -r include/gtest /usr/include
-          sudo cp ./lib/*.a /usr/lib
+          sudo apt install -y cmake g++ git
 
-      - name: Configure CMake
-        run: cmake -B build -S .
+      - name: Install GoogleTest
+        run: |
+          git clone https://github.com/google/googletest.git
+          cd googletest
+          cmake -S . -B build
+          sudo cmake --build build --target install
 
-      - name: Build
+      - name: Configure project
+        run: cmake -S . -B build
+
+      - name: Build project
         run: cmake --build build -j$(nproc)
 
       - name: Run tests
         run: |
           cd build
-          ctest --output-on-failure || true
+          ctest --output-on-failure
 
