@@ -1,105 +1,94 @@
-Test Report
-General Information
+# Test Report
 
-Testing Framework: Google Test (gtest)
+## General Information
+**Testing Framework:** Google Test (gtest)  
+**Test Type:** Unit Tests  
+**Tested Components:**  
+- `Spell` – spell logic and combo matching  
+- `Invoker` – spell management and combo validation  
+- `Player` – field and card management  
+- `RankMode` – ranking system timing logic
 
-Test Types: Unit tests, Integration tests, Edge case tests
+---
 
-Tested Components: Invoker, Spell hierarchy, GameMode subclasses (ClassicMode, RankMode, AIMode), and AIPlayer logic
+## Unit Tests
 
-Unit Tests
-Spell Tests
+### Spell Tests
+**File:** `spell.hpp`  
+**Test:** `MatchesComboIgnoresCaseAndSpaces`  
+**Purpose:** Verify that combo matching works correctly regardless of case and spacing.  
+**Validated:**  
+- `qqq` and `Q Q Q` are recognized as equivalent  
+- Incorrect combos (`QQE`, `q Q w e`) are properly rejected  
 
-Tested all core spell subclasses:
+**Result:** Passed
 
-ColdSnap, GhostWalk, EMP, Tornado, Alacrity, SunStrike, etc.
+---
 
-Validated:
+### Invoker Tests
+**File:** `invoker.hpp`  
+**Test:** `CanFindComboByName`  
+**Purpose:** Validate that the Invoker can correctly find and verify spell combos by name.  
+**Validated:**  
+- `getComboByName("tornado")` returns `"WWQ"`  
+- `validateComboByName("sun_strike", "e e e")` returns true  
+- Invalid combos are correctly rejected  
 
-Correct spell names and combos (getName(), getCombo())
+**Result:** Passed
 
-Combo matching logic (matchesCombo())
+---
 
-Proper output formatting in Invoker::castSpell()
+### Player Tests
+**File:** `player.hpp`  
+**Test 1:** `FieldInitialization`  
+**Purpose:** Ensure that the player field is initialized correctly.  
+**Validated:**  
+- The field starts empty  
+- All slots initially contain `"EmptySlot"`  
 
-Invoker Tests
+**Result:** Passed  
 
-Verified key Invoker functionality:
+**Test 2:** `MoveCardToFieldWorks`  
+**Purpose:** Verify that cards can be successfully placed on the field.  
+**Validated:**  
+- `moveCardToField()` correctly places the `"Invoker"` card in the selected slot  
 
-Adding spells (addSpell)
+**Result:** Passed
 
-Listing available spells (listSpells)
+---
 
-Combo lookup by name (getComboByName)
+### RankMode Tests
+**File:** `rank_mode.hpp`  
+**Test:** `RanksOutputTimeThresholds`  
+**Purpose:** Check that the rank timing logic behaves correctly within defined limits.  
+**Validated:**  
+- Time value `12.0` seconds falls within the expected range (10–15 seconds)  
 
-Combo validation (validateComboByName)
+**Result:** Passed
 
-Casting known and unknown spells (castSpell)
+---
 
-GameMode Tests
+## Summary
 
-Checked correct initialization and interaction flow for:
+| Component | Test Count | Passed | Status |
+|------------|-------------|---------|--------|
+| Spell      | 1 | 1 | Passed |
+| Invoker    | 1 | 1 | Passed |
+| Player     | 2 | 2 | Passed |
+| RankMode   | 1 | 1 | Passed |
+| **Total**  | **5** | **5** | **All Passed** |
 
-ClassicMode – free spell casting mode
+---
 
-RankMode – ranking system logic with score tracking
+## Observations
+- Tests cover the core gameplay logic (spells, invoker, player, ranking mode).  
+- All tests compiled and executed successfully.  
+- No crashes or memory leaks observed during test execution.  
+- System behavior remains stable under tested scenarios.
 
-AIMode – timed spell casting and basic AI response
+---
 
-Each mode was tested for:
-
-Correct prompts and user interaction structure
-
-Proper use of Invoker methods
-
-Mode name reporting (name())
-
-Integration Tests
-Mode Switching
-
-Simulated sequential launching of all modes
-
-Verified that internal state resets properly and invoker spell list persists
-
-Spell Casting Sequence
-
-Casted multiple spells in sequence (QWE, QQQ, WQE)
-
-Confirmed correct output and absence of segmentation faults
-
-AI Interaction
-
-Simulated AIMode behavior
-
-Verified AI chooses valid spells from the available list
-
-Measured timing consistency and AI reaction handling
-
-Edge Case Tests
-Unknown Spells
-
-Attempted to cast an unregistered spell name
-
-Confirmed graceful handling with > (unknown spell: <name>) output
-
-Empty Spell List
-
-Invoked methods on Invoker without any added spells
-
-Confirmed that listing and casting handle empty state without crash
-
-Invalid Input Handling
-
-Checked for stability on unexpected input values (empty string, lowercase spell name)
-
-System remains stable and outputs consistent error messages
-
-Summary
-
-All tests compiled and passed successfully
-
-No memory leaks detected during runtime (checked via valgrind)
-
-Game core behaves as expected across all three modes
-
-AI timing logic stable under repeated test runs
+## Recommendations
+- Add unit tests for `AIMode` and `Card` classes.  
+- Extend test coverage with integration tests to validate interactions between modules.  
+- Include performance and stress testing for AI timing and spell-casting sequences.
