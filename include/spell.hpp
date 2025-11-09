@@ -4,10 +4,6 @@
 #include <string>
 #include <algorithm>
 
-/**
- * Простая модель заклинания.
- * combo хранится в компактном виде без пробелов, например "QQQ", "QWE", "EEQ".
- */
 class Spell {
 private:
     std::string name_;
@@ -15,28 +11,26 @@ private:
 public:
     Spell(const std::string& name = "", const std::string& combo = "")
         : name_(name), combo_(combo) {
-        // Нормализуем combo: убираем пробелы и делаем заглавными
         std::string tmp;
         for (char c : combo_) {
-            if (c != ' ' && c != '\t') tmp.push_back((char)std::toupper((unsigned char)c));
+            if (c != ' ' && c != '\t') 
+                tmp.push_back((char)std::toupper((unsigned char)c));
         }
         combo_ = tmp;
     }
 
     std::string getName() const { return name_; }
-    std::string getCombo() const { return combo_; } // "QWE" и т.д.
+    std::string getCombo() const { return combo_; }
 
-    // Сравнить входную комбинацию (произвольный формат) с этим спеллом
     bool matchesCombo(const std::string& input) const {
-        // нормализуем вход: убрать пробелы, сделать заглавными
-        std::string tmp;
-        for (char c : input) {
-            if (c == 'q' || c == 'Q' || c == 'w' || c == 'W' || c == 'e' || c == 'E')
-                tmp.push_back((char)std::toupper((unsigned char)c));
-            // также игнорируем любые другие символы (например пробелы)
-        }
-        return tmp == combo_;
+    auto normalize = [](std::string s) {
+        s.erase(remove_if(s.begin(), s.end(), ::isspace), s.end());
+        std::transform(s.begin(), s.end(), s.begin(), ::toupper);
+        return s;
+    };
+    return normalize(input) == normalize(combo_);
     }
+
 };
 
 #endif // SPELL_HPP
